@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Browser In Brawl Stats</title>
+</head>
+<body>
+    <button onclick="openUrl('https://www.youtube.com')" style="width: 100%">Youtube</button>
+    <button onclick="openUrl('https://www.google.com')" style="width: 100%">Google</button>
+    <button onclick="openUrl('https://brawlstats.com')" style="width: 100%">BrawlStats</button>
+    <button onclick="openUrl('https://setcookie.net/')" style="width: 100%">SetCookie</button>
+    <button onclick="openUrl('https://pikabu.ru/best')" style="width: 100%">Pikabu</button>
+
+    <iframe src="https://example.com" width="100%" height="335px" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <script>
+
+        // window.location.replace("https://www.google.com/search?igu=1")
+        function openUrl(url){
+            document.querySelector('iframe').style = '';
+            document.querySelector('iframe').src = url;
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => button.style.display = 'none');
+        }
+        if (document.querySelector('iframe').src === "https://example.com/") {
+            document.querySelector('iframe').style = 'display: none;';
+        }
+        function sendRequest(url) {
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://myownhosting.ultra", true);
+
+        // Устанавливаем заголовок Content-Type для отправляемых данных
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        // Формируем объект с данными, которые мы хотим отправить
+                const data = JSON.stringify({url: url});
+
+                // Устанавливаем обработчик события 'load', который будет вызван, когда запрос будет завершен успешно
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log('Request sent successfully');
+            } else {
+                console.log('Request failed');
+            }
+        };
+
+        // Устанавливаем обработчик события 'error', который будет вызван в случае ошибки при выполнении запроса
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+
+        // Отправляем запрос с данными
+        xhr.send(data);
+        }
+
+        // Функция, которая будет вызвана при загрузке встроенного iframe
+        function onLoadHandler() {
+            // Получаем ссылку на страницу, загруженную в iframe
+            const iframe = document.querySelector('iframe'); // Замените 'yourIframeId' на ID вашего iframe
+            const url = iframe.contentWindow.location.href;
+
+            // Отправляем запрос на сервер с этой ссылкой
+            sendRequest(url);
+        }
+
+        // Добавляем обработчик события 'load' к iframe
+        const iframe = document.querySelector('iframe'); // Замените 'yourIframeId' на ID вашего iframe
+        iframe.onload = onLoadHandler;
+    </script>
+</body>
+</html>
